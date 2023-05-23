@@ -14,6 +14,7 @@
 
 using namespace std;
 
+// Classe documento
 class Document {
 public:
     int id;
@@ -23,7 +24,7 @@ public:
     Document() = default;
     Document(int id, const string& title, const string& content) : id(id), title(title), content(content) {}
 };
-
+// Classe índice invertido
 class InvertedIndex {
 public:
     unordered_map<string, unordered_map<int, int>> index;
@@ -34,8 +35,8 @@ public:
     InvertedIndex(const string& folderPath) {
         load_documents(folderPath);
     }
-
-string normalize(const string& term) const {
+    // Função para normalizar um termo (remover acentos, caracteres especiais, números e torná-lo minúsculo)
+    string normalize(const string& term) const {
     static const vector<pair<string, char>> accent_pairs = {
     {u8"\u00E1", 'a'}, {u8"\u00E0", 'a'}, {u8"\u00E2", 'a'}, {u8"\u00E3", 'a'}, {u8"\u00E4", 'a'},
     {u8"\u00C1", 'A'}, {u8"\u00C0", 'A'}, {u8"\u00C2", 'A'}, {u8"\u00C3", 'A'}, {u8"\u00C4", 'A'},
@@ -52,7 +53,7 @@ string normalize(const string& term) const {
 
     string normalized_term = term;
 
-    // Convert accents
+    // Converte acentos da tabela
     for (auto& pair : accent_pairs) {
         size_t pos = normalized_term.find(pair.first);
         while (pos != string::npos) {
@@ -61,22 +62,22 @@ string normalize(const string& term) const {
         }
     }
 
-    // Remove numbers
+    // Remover números
     normalized_term.erase(remove_if(normalized_term.begin(), normalized_term.end(),
                                     [](unsigned char c) { return isdigit(c); }),
                           normalized_term.end());
 
-    // Remover non-alphanumeric characters
+    // Remover caracteres não-alfanuméricos
     normalized_term.erase(remove_if(normalized_term.begin(), normalized_term.end(),
                                     [](unsigned char c) { return !isalnum(c); }),
                           normalized_term.end());
-    // Minuscula
+    // Transforma em minúscula
     transform(normalized_term.begin(), normalized_term.end(), normalized_term.begin(),
               [](unsigned char c) { return tolower(c); });
 
     return normalized_term;
 }
-
+    // Função para carregar os documentos de um diretório
     void load_documents(const string& folderPath) {
         vector<string> fileNames = get_file_names(folderPath);
         for (const auto& fileName : fileNames) {
@@ -97,7 +98,7 @@ string normalize(const string& term) const {
             }
         }
     }
-
+    // Função para obter os nomes dos arquivos em um diretório
     vector<string> get_file_names(const string& folderPath) {
         vector<string> fileNames;
         DIR* directory;
@@ -114,7 +115,7 @@ string normalize(const string& term) const {
         }
         return fileNames;
     }
-
+    // Função para adicionar um documento ao índice invertido
     void add_document(const Document& doc) {
         documents[doc.id] = doc;
         vector<string> terms = tokenize(doc.title + " " + doc.content);
@@ -128,7 +129,7 @@ string normalize(const string& term) const {
             index[normalized_term][doc.id]++;
         }
     }
-
+    // Função para tokenizar uma string em palavras separadas
     vector<string> tokenize(const string& str) const {
         vector<string> tokens;
         string token;
@@ -138,7 +139,7 @@ string normalize(const string& term) const {
         }
         return tokens;
     }
-
+    // Função para realizar uma busca no índice invertido com base em uma consulta (com ordem de relevância)
     vector<pair<int, int>> search(const string& query) const {
         vector<string> terms = tokenize(query);
         unordered_map<int, int> document_scores;
@@ -162,7 +163,7 @@ string normalize(const string& term) const {
         });
         return sorted_results;
     }
-
+    // Função para imprimir os títulos dos documentos encontrados em uma busca
     void print_titles(const vector<pair<int, int>>& results, const string& query) const {
         if (results.empty()) {
             cout << "No documents found for the search query '" << query << "'." << endl;
@@ -180,7 +181,6 @@ string normalize(const string& term) const {
         cout << endl;
     }
 };
-/*
 int main() {
     string folderPath = "./documents.txt";
     InvertedIndex index(folderPath);
@@ -197,4 +197,4 @@ int main() {
     }
 
     return 0;
-}*/
+}
