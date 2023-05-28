@@ -8,3 +8,4 @@ int main() {
 }
 //Comando para compilar e rodar o código
 //g++ main.cpp index.cpp search.cpp -o meu_programa && ./meu_programa
+//Para rodar o Makefile usar make -f Makefile.mak
