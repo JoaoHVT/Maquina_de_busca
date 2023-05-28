@@ -1,5 +1,5 @@
 #include "search.h"
-
+// Função que realiza a busca e retorna os docs da pesquisa
 void SearchEngine::run() {
     string query;
     cout << "Enter a search query (type 'quit' to exit): ";

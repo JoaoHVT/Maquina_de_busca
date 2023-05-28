@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class SearchEngine {
+class SearchEngine {// Classe Search responsável pela interação com o usuário
 public:
     InvertedIndex index;
 
