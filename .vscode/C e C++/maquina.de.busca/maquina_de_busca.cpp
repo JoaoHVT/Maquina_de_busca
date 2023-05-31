@@ -35,48 +35,56 @@ public:
     InvertedIndex(const string& folderPath) {
         load_documents(folderPath);
     }
-    // Função para normalizar um termo (remover acentos, caracteres especiais, números e torná-lo minúsculo)
-    string normalize(const string& term) const {
+    // Função para normalizar um termo (converter letras para minúsculas, remover caracteres não alfanuméricos e manter os espaços)
+    string removeAccents(const string& term) const{
     static const vector<pair<string, char>> accent_pairs = {
-    {u8"\u00E1", 'a'}, {u8"\u00E0", 'a'}, {u8"\u00E2", 'a'}, {u8"\u00E3", 'a'}, {u8"\u00E4", 'a'},
-    {u8"\u00C1", 'A'}, {u8"\u00C0", 'A'}, {u8"\u00C2", 'A'}, {u8"\u00C3", 'A'}, {u8"\u00C4", 'A'},
-    {u8"\u00E9", 'e'}, {u8"\u00E8", 'e'}, {u8"\u00EA", 'e'}, {u8"\u00EB", 'e'},
-    {u8"\u00C9", 'E'}, {u8"\u00C8", 'E'}, {u8"\u00CA", 'E'}, {u8"\u00CB", 'E'},
-    {u8"\u00ED", 'i'}, {u8"\u00EC", 'i'}, {u8"\u00EE", 'i'}, {u8"\u00EF", 'i'},
-    {u8"\u00CD", 'I'}, {u8"\u00CC", 'I'}, {u8"\u00CE", 'I'}, {u8"\u00CF", 'I'},
-    {u8"\u00F3", 'o'}, {u8"\u00F2", 'o'}, {u8"\u00F4", 'o'}, {u8"\u00F5", 'o'}, {u8"\u00F6", 'o'},
-    {u8"\u00D3", 'O'}, {u8"\u00D2", 'O'}, {u8"\u00D4", 'O'}, {u8"\u00D5", 'O'}, {u8"\u00D6", 'O'},
-    {u8"\u00FA", 'u'}, {u8"\u00F9", 'u'}, {u8"\u00FB", 'u'}, {u8"\u00FC", 'u'},
-    {u8"\u00DA", 'U'}, {u8"\u00D9", 'U'}, {u8"\u00DB", 'U'}, {u8"\u00DC", 'U'},
-    {u8"\u00E7", 'c'}, {u8"\u00C7", 'C'}
-};
+        {u8"\u00E1", 'a'}, {u8"\u00E0", 'a'}, {u8"\u00E2", 'a'}, {u8"\u00E3", 'a'}, {u8"\u00E4", 'a'},
+        {u8"\u00C1", 'A'}, {u8"\u00C0", 'A'}, {u8"\u00C2", 'A'}, {u8"\u00C3", 'A'}, {u8"\u00C4", 'A'},
+        {u8"\u00E9", 'e'}, {u8"\u00E8", 'e'}, {u8"\u00EA", 'e'}, {u8"\u00EB", 'e'},
+        {u8"\u00C9", 'E'}, {u8"\u00C8", 'E'}, {u8"\u00CA", 'E'}, {u8"\u00CB", 'E'},
+        {u8"\u00ED", 'i'}, {u8"\u00EC", 'i'}, {u8"\u00EE", 'i'}, {u8"\u00EF", 'i'},
+        {u8"\u00CD", 'I'}, {u8"\u00CC", 'I'}, {u8"\u00CE", 'I'}, {u8"\u00CF", 'I'},
+        {u8"\u00F3", 'o'}, {u8"\u00F2", 'o'}, {u8"\u00F4", 'o'}, {u8"\u00F5", 'o'}, {u8"\u00F6", 'o'},
+        {u8"\u00D3", 'O'}, {u8"\u00D2", 'O'}, {u8"\u00D4", 'O'}, {u8"\u00D5", 'O'}, {u8"\u00D6", 'O'},
+        {u8"\u00FA", 'u'}, {u8"\u00F9", 'u'}, {u8"\u00FB", 'u'}, {u8"\u00FC", 'u'},
+        {u8"\u00DA", 'U'}, {u8"\u00D9", 'U'}, {u8"\u00DB", 'U'}, {u8"\u00DC", 'U'},
+        {u8"\u00E7", 'c'}, {u8"\u00C7", 'C'}
+    };
 
-    string normalized_term = term;
+    string term_without_accents = term;
 
-    // Converte acentos da tabela
     for (auto& pair : accent_pairs) {
-        size_t pos = normalized_term.find(pair.first);
+        size_t pos = term_without_accents.find(pair.first);
         while (pos != string::npos) {
-            normalized_term.replace(pos, pair.first.length(), 1, pair.second);
-            pos = normalized_term.find(pair.first, pos + 1);
-        }
+            term_without_accents.replace(pos, pair.first.length(), 1, pair.second);
+            pos = term_without_accents.find(pair.first, pos + 1);
+        }   
     }
+    return term_without_accents;
+}
+
+string normalize(const string& term) const {
+    string normalized_term = removeAccents(term);
 
     // Remover números
     normalized_term.erase(remove_if(normalized_term.begin(), normalized_term.end(),
-                                    [](unsigned char c) { return isdigit(c); }),
-                          normalized_term.end());
+                                [](unsigned char c) { return isdigit(c); }),
+                      normalized_term.end());
 
-    // Remover caracteres não-alfanuméricos
+    // Remover caracteres não alfanuméricos, exceto espaços
     normalized_term.erase(remove_if(normalized_term.begin(), normalized_term.end(),
-                                    [](unsigned char c) { return !isalnum(c); }),
-                          normalized_term.end());
+                                [](unsigned char c) { return !isalnum(c) && !isspace(c); }),
+                      normalized_term.end());
+
     // Transforma em minúscula
     transform(normalized_term.begin(), normalized_term.end(), normalized_term.begin(),
               [](unsigned char c) { return tolower(c); });
 
     return normalized_term;
 }
+
+
+
     // Função para carregar os documentos de um diretório
     void load_documents(const string& folderPath) {
         vector<string> fileNames = get_file_names(folderPath);
@@ -139,30 +147,55 @@ public:
         }
         return tokens;
     }
-    // Função para realizar uma busca no índice invertido com base em uma consulta (com ordem de relevância)
-    vector<pair<int, int>> search(const string& query) const {
-        vector<string> terms = tokenize(query);
-        unordered_map<int, int> document_scores;
-        for (const auto& term : terms) {
-            string normalized_term = normalize(term);
-            if (index.count(normalized_term)) {
-                const unordered_map<int, int>& term_postings = index.at(normalized_term);
+    // Função para realizar uma busca no índice invertido com base em uma consulta (apenas documentos que contêm todos os termos)
+// (com ordem de relevância)
+vector<pair<int, int>> search(const string& query) const {
+    string normalized_query = normalize(query);
+    vector<string> terms = tokenize(normalized_query);
+    unordered_map<int, int> document_scores;
+    bool firstTerm = true; // Flag para indicar o primeiro termo da consulta
+
+    for (const auto& term : terms) {
+        if (index.count(term)) {
+            const unordered_map<int, int>& term_postings = index.at(term);
+            if (firstTerm) {
+                // Se for o primeiro termo da consulta, inicializa a contagem com as ocorrências do termo
                 for (const auto& posting : term_postings) {
-                    document_scores[posting.first] += posting.second;
+                    document_scores[posting.first] = posting.second;
+                }
+                firstTerm = false;
+            } else {
+                // Para os demais termos, realiza a interseção com os documentos que já estão na contagem
+                for (auto it = document_scores.begin(); it != document_scores.end(); ) {
+                    int document_id = it->first;
+                    if (term_postings.count(document_id)) {
+                        it->second += term_postings.at(document_id);
+                        ++it;
+                    } else {
+                        it = document_scores.erase(it);
+                    }
                 }
             }
+        } else {
+            // Se algum termo não estiver presente no índice, retorna uma lista vazia
+            return {};
         }
-        vector<pair<int, int>> sorted_results(document_scores.begin(), document_scores.end());
-        sort(sorted_results.begin(), sorted_results.end(), [this](const auto& a, const auto& b) {
-            if (a.second == b.second) {
-                const Document& docA = documents.at(a.first);
-                const Document& docB = documents.at(b.first);
-                return docA.title < docB.title;
-            }
-            return a.second > b.second;
-        });
-        return sorted_results;
     }
+
+    // Ordena por relevância e critério de desempate
+    vector<pair<int, int>> sorted_results(document_scores.begin(), document_scores.end());
+    sort(sorted_results.begin(), sorted_results.end(), [this](const auto& a, const auto& b) {
+        if (a.second == b.second) {
+            const Document& docA = documents.at(a.first);
+            const Document& docB = documents.at(b.first);
+            return docA.title < docB.title;
+        }
+        return a.second > b.second;
+    });
+
+    return sorted_results;
+}
+
     // Função para imprimir os títulos dos documentos encontrados em uma busca
     void print_titles(const vector<pair<int, int>>& results, const string& query) const {
         if (results.empty()) {
@@ -180,10 +213,23 @@ public:
         }
         cout << endl;
     }
+    // Função para imprimir o conteúdo normalizado de todos os documentos (apenas para testes)
+    /*void print_normalized_content() const {
+    cout << "Normalized Content of Documents:" << endl;
+    for (const auto& doc : documents) {
+        cout << "Document ID: " << doc.first << endl;
+        cout << "Normalized Title: " << normalize(doc.second.title) << endl;
+        cout << "Normalized Content: " << normalize(doc.second.content) << endl;
+        cout << endl;
+    }
+}*/
 };
+// Main para execução de buscas interativas
 int main() {
-    string folderPath = "./documents.txt";
+    string folderPath = "./documentos";
     InvertedIndex index(folderPath);
+
+    /*index.print_normalized_content();//(apenas teste)*/
 
     string query;
     while (true) {
@@ -192,9 +238,12 @@ int main() {
         if (query == "exit") {
             break;
         }
-        vector<pair<int, int>> result = index.search(query);
-        index.print_titles(result, query);
+        string normalized_query = index.normalize(query); // Normaliza a consulta
+cout << "Original Query: " << query << endl;
+        cout << "Normalized Query: " << normalized_query << endl;
+        
+        vector<pair<int, int>> result = index.search(normalized_query);
+        index.print_titles(result, normalized_query);
     }
-
     return 0;
 }
