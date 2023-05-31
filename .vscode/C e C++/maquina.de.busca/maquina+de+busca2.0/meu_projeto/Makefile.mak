@@ -11,15 +11,16 @@ OBJS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
 all: meu_programa
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir $(OBJDIR) 2>/dev/null || true
+	if not exist $(OBJDIR) mkdir $(OBJDIR)
 	$(CC) $(CFLAGS) $(CXXFLAGS) -I$(INCDIR) -c -o $@ $<
 
 meu_programa: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
-	@rm -rf *.exe
 
 clean:
-	@rm -rf $(OBJDIR) meu_programa
+	@if exist $(OBJDIR) rmdir /s /q $(OBJDIR)
+	@del /q meu_programa
+	@del /q *.exe
 
 run: meu_programa
 	./meu_programa
