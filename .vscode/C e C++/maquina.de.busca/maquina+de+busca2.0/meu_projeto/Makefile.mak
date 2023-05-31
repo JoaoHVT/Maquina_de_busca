@@ -16,6 +16,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 meu_programa: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
+	@rm -rf *.exe
 
 clean:
 	@rm -rf $(OBJDIR) meu_programa
