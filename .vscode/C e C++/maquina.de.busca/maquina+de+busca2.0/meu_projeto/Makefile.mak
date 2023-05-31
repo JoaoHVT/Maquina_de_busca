@@ -19,6 +19,7 @@ meu_programa: $(OBJS)
 
 clean:
 	@rm -rf $(OBJDIR) meu_programa
+	@rm -rf *.exe
 
 run: meu_programa
 	./meu_programa
