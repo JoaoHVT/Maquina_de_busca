@@ -3,7 +3,7 @@ CFLAGS = -std=c++11 -Wall
 SRCDIR = src
 INCDIR = include
 OBJDIR = obj
-CXXFLAGS = -std=c++14 -Wall -Iinclude
+CXXFLAGS = -std=c++17 -Wall -Iinclude
 
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
 OBJS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
