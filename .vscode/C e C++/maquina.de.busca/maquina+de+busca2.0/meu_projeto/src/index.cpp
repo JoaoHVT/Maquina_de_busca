@@ -1,34 +1,8 @@
 #include "index.h"
-// Função para transformar termos acentuados de acordo com a tabela
-string InvertedIndex::removeAccents(const string& term) const{
-    static const vector<pair<string, char>> accent_pairs = {
-        {u8"\u00E1", 'a'}, {u8"\u00E0", 'a'}, {u8"\u00E2", 'a'}, {u8"\u00E3", 'a'}, {u8"\u00E4", 'a'},
-        {u8"\u00C1", 'A'}, {u8"\u00C0", 'A'}, {u8"\u00C2", 'A'}, {u8"\u00C3", 'A'}, {u8"\u00C4", 'A'},
-        {u8"\u00E9", 'e'}, {u8"\u00E8", 'e'}, {u8"\u00EA", 'e'}, {u8"\u00EB", 'e'},
-        {u8"\u00C9", 'E'}, {u8"\u00C8", 'E'}, {u8"\u00CA", 'E'}, {u8"\u00CB", 'E'},
-        {u8"\u00ED", 'i'}, {u8"\u00EC", 'i'}, {u8"\u00EE", 'i'}, {u8"\u00EF", 'i'},
-        {u8"\u00CD", 'I'}, {u8"\u00CC", 'I'}, {u8"\u00CE", 'I'}, {u8"\u00CF", 'I'},
-        {u8"\u00F3", 'o'}, {u8"\u00F2", 'o'}, {u8"\u00F4", 'o'}, {u8"\u00F5", 'o'}, {u8"\u00F6", 'o'},
-        {u8"\u00D3", 'O'}, {u8"\u00D2", 'O'}, {u8"\u00D4", 'O'}, {u8"\u00D5", 'O'}, {u8"\u00D6", 'O'},
-        {u8"\u00FA", 'u'}, {u8"\u00F9", 'u'}, {u8"\u00FB", 'u'}, {u8"\u00FC", 'u'},
-        {u8"\u00DA", 'U'}, {u8"\u00D9", 'U'}, {u8"\u00DB", 'U'}, {u8"\u00DC", 'U'},
-        {u8"\u00E7", 'c'}, {u8"\u00C7", 'C'}
-    };
 
-    string term_without_accents = term;
-
-    for (auto& pair : accent_pairs) {
-        size_t pos = term_without_accents.find(pair.first);
-        while (pos != string::npos) {
-            term_without_accents.replace(pos, pair.first.length(), 1, pair.second);
-            pos = term_without_accents.find(pair.first, pos + 1);
-        }   
-    }
-    return term_without_accents;
-}
 // Função para normalizar um termo (converter letras para minúsculas, remover caracteres não alfanuméricos e númemeros, mas manter os espaços)
 string InvertedIndex::normalize(const string& term) const {
-    string normalized_term = removeAccents(term);
+    string normalized_term = term;
 
     // Remover números
     normalized_term.erase(remove_if(normalized_term.begin(), normalized_term.end(),
@@ -113,7 +87,7 @@ vector<string> InvertedIndex::tokenize(const string& str) const {
 }
 // Função para realizar uma busca no índice invertido com base em uma consulta (apenas documentos que contêm todos os termos/com ordem de relevância)
 vector<pair<int, int>> InvertedIndex::search(const string& query) const {
-    string normalized_query = normalize(removeAccents(query));    
+    string normalized_query = normalize(query);    
     vector<string> terms = tokenize(normalized_query);
     unordered_map<int, int> document_scores;
     bool firstTerm = true; // Flag para indicar o primeiro termo da consulta
