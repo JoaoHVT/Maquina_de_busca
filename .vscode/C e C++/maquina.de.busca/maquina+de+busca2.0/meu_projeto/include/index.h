@@ -41,7 +41,6 @@ private:
     unordered_map<int, Document> documents;
     int next_id;
 
-    string removeAccents(const string& term) const;
     string normalize(const string& term) const;
     void load_documents(const string& folderPath);
     vector<string> get_file_names(const string& folderPath);
