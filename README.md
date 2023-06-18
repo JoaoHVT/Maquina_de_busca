@@ -5,5 +5,5 @@ Máquina de busca com índice invertido e sistema de busca interativo
 3) Todos os .exe e .o (obj) serão apagados e gerados novamente
 4) Todos os arquivos .h estão na pasta "include"
 5) Todos os arquivos .cpp estão na pasta "src"
-6) DOCv2.0 corresponde à documentação, com a expicação detalhada de tudo
+6) DOC.pdf corresponde à documentação, com a expicação detalhada de tudo
 7) Os documentos serão lidos da pasta "documentos" contida nesse diretório. Favor passar os arquivos de teste para essa pasta
