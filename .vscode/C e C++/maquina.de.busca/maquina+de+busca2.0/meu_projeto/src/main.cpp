@@ -8,8 +8,8 @@ int main() {
 }
 /*Comando para compilar e rodar o código:
 g++ main.cpp index.cpp search.cpp -o meu_programa && ./meu_programa
-//Para rodar o Makefile, usar "make" (compilar) e "make run" (rodar)
-/*Estrutura do código:
+Para rodar o Makefile, usar "make" (compilar) e "make run" (rodar)
+Estrutura do código:
 - meu_projeto
   |- Makefile
   |- src
